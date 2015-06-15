@@ -19,6 +19,7 @@ feature 'restaurants' do
       expect(page).to have_content('KFC')
       expect(page).not_to have_content('No restaurants yet')
     end
+  end
 
     context 'creating restaurants' do
       scenario 'prompts user to fill out a form, then displays the new restaurant' do
@@ -42,6 +43,4 @@ feature 'restaurants' do
         expect(current_path).to eq "/restaurants/#{kfc.id}"
       end
     end
-
-  end
 end
