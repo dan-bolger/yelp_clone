@@ -12,4 +12,16 @@ feature 'reviewing' do
     expect(current_path).to eq '/restaurants'
     expect(page).to have_content('so so')
   end
+
+  scenario 'deleting restaurants' do
+    visit '/restaurants'
+    click_link 'Delete KFC'
+    expect(page).not_to have_content 'KFC'
+    expect(page).to have_content 'Restaurant deleted!'
+  end
+
+  describe Review do
+    it { should belong_to(:restaurant)}
+  end
+
 end
