@@ -24,4 +24,6 @@ feature 'reviewing' do
     it { should belong_to(:restaurant)}
   end
 
+
+
 end
