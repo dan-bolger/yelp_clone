@@ -9,7 +9,7 @@ feature 'reviewing' do
                         password_confirmation: 'pAssw0rd'}
 
   scenario 'allows users to leave reviews using a form' do
-    visit '/restaurants'
+    sign_in 'test@test.com', 'pAssw0rd'
     click_link 'Review KFC'
     fill_in "Thoughts", with: "so so"
     select '3', from: 'Rating'
@@ -26,9 +26,8 @@ feature 'reviewing' do
   end
 
   describe Review do
-    it { should belong_to(:restaurant)}
+    it { is_expected.to belong_to(:restaurant)}
+    # it { is_expected.to belong_to(:user)}
   end
-
-
 
 end
