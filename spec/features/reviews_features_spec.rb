@@ -1,7 +1,12 @@
 require 'rails_helper'
+require_relative '../helpers/session_helpers'
+include Session
 
 feature 'reviewing' do
   before {Restaurant.create name: 'KFC'}
+  before {User.create email: 'test@test.com',
+                        password: 'pAssw0rd',
+                        password_confirmation: 'pAssw0rd'}
 
   scenario 'allows users to leave reviews using a form' do
     visit '/restaurants'
@@ -14,7 +19,7 @@ feature 'reviewing' do
   end
 
   scenario 'deleting restaurants' do
-    visit '/restaurants'
+    sign_in 'test@test.com', 'pAssw0rd'
     click_link 'Delete KFC'
     expect(page).not_to have_content 'KFC'
     expect(page).to have_content 'Restaurant deleted!'

@@ -72,9 +72,12 @@ feature 'restaurants' do
   context 'editing restaurants' do
 
     before {Restaurant.create name: 'KFC'}
+    before {User.create email: 'test@test.com',
+                        password: 'pAssw0rd',
+                        password_confirmation: 'pAssw0rd'}
 
     scenario 'lets the user edit a restaurant' do
-      visit '/restaurants'
+      sign_in 'test@test.com', 'pAssw0rd'
       click_link 'Edit KFC'
       fill_in 'Name', with: 'Kentucky Fried Chicken'
       click_button 'Update Restaurant'
@@ -86,9 +89,12 @@ feature 'restaurants' do
   context 'deleting restaurants' do
 
     before {Restaurant.create name: 'KFC'}
+     before {User.create email: 'test@test.com',
+                        password: 'pAssw0rd',
+                        password_confirmation: 'pAssw0rd'}
 
     scenario 'removes a restaurant when a user clicks a delete link' do
-      visit '/restaurants'
+      sign_in 'test@test.com', 'pAssw0rd'
       click_link 'Delete KFC'
       expect(page).not_to have_content 'KFC'
       expect(page).to have_content 'Restaurant deleted!'
