@@ -1,9 +1,11 @@
 require 'rails_helper'
+require_relative '../helpers/session_helpers'
+include Session
 
 feature 'restaurants' do
   context 'no restaurants have been added' do
     scenario 'should display a prompt to add a restaurant' do
-      visit '/restaurants'
+      sign_up
       expect(page).to have_content 'No restaurants yet'
       expect(page).to have_link 'Add a restaurant'
     end
@@ -23,18 +25,23 @@ feature 'restaurants' do
 
   context 'creating restaurants' do
     scenario 'prompts user to fill out a form, then displays the new restaurant' do
-      visit '/restaurants'
+      sign_up
       click_link 'Add a restaurant'
       fill_in 'Name', with: 'KFC'
       click_button 'Create Restaurant'
       expect(page).to have_content 'KFC'
       expect(current_path).to eq '/restaurants'
     end
+
+    scenario 'does not let user create a restaurant if they are not logged in' do
+      visit '/restaurants'
+      expect(page).not_to have_link 'Add a restaurant'
+    end
   end
 
   context 'an invalid restaurant' do
     it 'does not let you submit if the name is too short' do
-      visit '/restaurants'
+      sign_up
       click_link 'Add a restaurant'
       fill_in 'Name', with: 'ff'
       click_button 'Create Restaurant'
@@ -42,7 +49,7 @@ feature 'restaurants' do
       expect(page).to have_content 'error'
     end
 
-    it 'is not valud unless it has a unique name' do
+    it 'is not valid unless it has a unique name' do
       Restaurant.create(name: "Moe's Tavern")
       restaurant = Restaurant.new(name: "Moe's Tavern")
       expect(restaurant).to have(1).error_on(:name)
