@@ -2,16 +2,16 @@ require 'rails_helper'
 require_relative '../helpers/session_helpers'
 include Session
 
-feature 'restaurants' do
+feature 'Restaurants: ' do
   context 'no restaurants have been added' do
     scenario 'should display a prompt to add a restaurant' do
-      sign_up
+      sign_up('test@example.com')
       expect(page).to have_content 'No restaurants yet'
       expect(page).to have_link 'Add a restaurant'
     end
   end
 
-  context 'restaurants have been added' do
+  context 'Restaurants have been added' do
     before do
       Restaurant.create(name: 'KFC')
     end
@@ -25,7 +25,7 @@ feature 'restaurants' do
 
   context 'creating restaurants' do
     scenario 'prompts user to fill out a form, then displays the new restaurant' do
-      sign_up
+      sign_up('test@example.com')
       click_link 'Add a restaurant'
       fill_in 'Name', with: 'KFC'
       click_button 'Create Restaurant'
@@ -41,7 +41,7 @@ feature 'restaurants' do
 
   context 'an invalid restaurant' do
     it 'does not let you submit if the name is too short' do
-      sign_up
+      sign_up('test@example.com')
       click_link 'Add a restaurant'
       fill_in 'Name', with: 'ff'
       click_button 'Create Restaurant'
@@ -77,7 +77,7 @@ feature 'restaurants' do
                         password_confirmation: 'pAssw0rd'}
 
     scenario 'lets the user edit a restaurant' do
-      sign_in 'test@test.com', 'pAssw0rd'
+      sign_in 'test@test.com'
       click_link 'Edit KFC'
       fill_in 'Name', with: 'Kentucky Fried Chicken'
       click_button 'Update Restaurant'
@@ -88,17 +88,27 @@ feature 'restaurants' do
 
   context 'deleting restaurants' do
 
-    before {Restaurant.create name: 'KFC'}
-     before {User.create email: 'test@test.com',
+    before {User.create email: 'test@test.com',
                         password: 'pAssw0rd',
                         password_confirmation: 'pAssw0rd'}
+    before {Restaurant.create name: 'KFC', user: User.last}
 
     scenario 'removes a restaurant when a user clicks a delete link' do
-      sign_in 'test@test.com', 'pAssw0rd'
+      sign_in 'test@test.com'
       click_link 'Delete KFC'
       expect(page).not_to have_content 'KFC'
       expect(page).to have_content 'Restaurant deleted!'
     end
-  end
 
+    scenario 'cannot delete restaurants belonging to other users' do
+      sign_up 'test1@test.com'
+      click_link 'Add a restaurant'
+      fill_in 'Name', with: 'Trade'
+      click_button 'Create Restaurant'
+      click_link 'Sign out'
+      sign_up 'test2@test.com'
+      expect(page).not_to have_content 'Delete Trade'
+    end
+
+  end
 end

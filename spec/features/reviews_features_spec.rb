@@ -2,14 +2,14 @@ require 'rails_helper'
 require_relative '../helpers/session_helpers'
 include Session
 
-feature 'reviewing' do
+feature 'Reviewing: ' do
   before {Restaurant.create name: 'KFC'}
   before {User.create email: 'test@test.com',
                         password: 'pAssw0rd',
                         password_confirmation: 'pAssw0rd'}
 
-  scenario 'allows users to leave reviews using a form' do
-    sign_in 'test@test.com', 'pAssw0rd'
+  scenario 'Allows users to leave reviews using a form' do
+    sign_in 'test@test.com'
     click_link 'Review KFC'
     fill_in "Thoughts", with: "so so"
     select '3', from: 'Rating'
@@ -18,16 +18,8 @@ feature 'reviewing' do
     expect(page).to have_content('so so')
   end
 
-  scenario 'deleting restaurants' do
-    sign_in 'test@test.com', 'pAssw0rd'
-    click_link 'Delete KFC'
-    expect(page).not_to have_content 'KFC'
-    expect(page).to have_content 'Restaurant deleted!'
-  end
-
   describe Review do
     it { is_expected.to belong_to(:restaurant)}
-    # it { is_expected.to belong_to(:user)}
   end
 
 end
